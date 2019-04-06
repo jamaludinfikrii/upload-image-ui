@@ -4,7 +4,7 @@ import Axios from 'axios';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 class App extends Component {
-  state = {selectedFile : null, data : [] , modal : false , dataEdit : {}, selectedFileEdit : null}
+  state = {error : '' ,selectedFile : null, data : [] , modal : false , dataEdit : {}, selectedFileEdit : null}
 
   componentDidMount(){
     this.getData()
@@ -52,7 +52,11 @@ class App extends Component {
      fd.append('product' ,JSON.stringify(data))
      Axios.post('http://localhost:4000/image' , fd)
      .then((res) => {
-       alert(res.data)
+       if(res.data.error){
+         this.setState({error : res.data.msg})
+       }else{
+        alert(res.data)
+       }
      })
      .catch((err) => {
        console.log(err)
@@ -112,7 +116,10 @@ class App extends Component {
             <input className='form-control btn-success' onClick={() => this.refs.input.click()} type='button' value={this.valueHandler()}/>            
           </div>
           <div className='col-md-3'>
-            <input className='form-control btn-primary' type='button' onClick={this.addData} value='add Data'/>            
+            <input className='form-control btn-primary' type='button' onClick={this.addData} value='add Data'/>     
+            {
+              this.state.error !== '' ? <p style={{color:'red'}}>{this.state.error}</p> : null
+            }       
           </div>
 
         </div>
